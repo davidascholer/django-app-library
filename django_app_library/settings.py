@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -74,9 +76,16 @@ WSGI_APPLICATION = 'django_app_library.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_app_library_db',
+        'HOST': 'localhost',
+        'USER': 'grim',
+        'PASSWORD': ''
     }
 }
 
@@ -85,15 +94,19 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+    # Ensure password is not the same as the username
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
+    # Checks min length
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
+    # Checks the password against a set of common passwords
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
+    # Checks the password isn't purely numeric
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -121,3 +134,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'core.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
