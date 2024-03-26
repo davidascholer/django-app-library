@@ -1,23 +1,22 @@
-from django.contrib.auth import get_user_model
-from rest_framework import permissions, viewsets
+from .models import User
+from .serializers import UserSerializer
+# For the api view and highlight
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework import viewsets
+from rest_framework.response import Response
 
-from .serializers import GroupSerializer, UserSerializer
 
-class UserViewSet(viewsets.ModelViewSet):
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+    })
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    This viewset automatically provides `list` and `retrieve` actions.
     """
-    User = get_user_model()
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-# class GroupViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows groups to be viewed or edited.
-#     """
-#     Group = get_user_model()
-#     queryset = Group.objects.all().order_by('name')
-#     serializer_class = GroupSerializer
-#     permission_classes = [permissions.IsAuthenticated]
