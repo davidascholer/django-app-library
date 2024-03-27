@@ -1,5 +1,5 @@
 from .models import ExtendedUser
-from .serializers import ExtendedUserSerializer
+from .serializers import ExtendedUserSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework import generics
 from rest_framework import permissions
@@ -13,6 +13,7 @@ from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
 
 
 @api_view(['GET'])
@@ -20,6 +21,14 @@ def api_root(request, format=None):
     return Response({
         'extended-users': reverse('extended-users-list', request=request, format=format)
     })
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `retrieve` actions.
+    """
+    User = get_user_model()
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class ExtendedUserViewSet(viewsets.ModelViewSet):
