@@ -157,8 +157,8 @@ DJOSER = {
     }
 }
 
-# Specifies the prefix that should be included in Auth header
 SIMPLE_JWT = {
+    # Specifies the prefix that should be included in Auth header e.g. Authorization=JWT header.payload.sig
     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
 }

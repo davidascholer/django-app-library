@@ -23,15 +23,6 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.email
 
-    # def save(self, *args, **kwargs):
-        # lexer = get_lexer_by_name(self.language)
-        # linenos = 'table' if self.linenos else False
-        # options = {'title': self.title} if self.title else {}
-        # formatter = HtmlFormatter(style=self.style, linenos=linenos,
-        #                         full=True, **options)
-        # super().save(*args, **kwargs)
-
-
     # Allow admin panel to sort by first name
     def email(self):
         return self.user.email

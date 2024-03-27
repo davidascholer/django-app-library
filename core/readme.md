@@ -38,9 +38,34 @@ In ./serializers.py, change the Meta classes to the signatures required
     path('auth/', include('djoser.urls.jwt')),
 ]`
 
-## configure auth engine (JWT approach)
+## configure auth engine 
+  +--------+                                           +---------------+
+  |        |--(A)------- Authorization Grant --------->|               |
+  |        |                                           |               |
+  |        |<-(B)----------- Access Token -------------|               |
+  |        |               & Refresh Token             |               |
+  |        |                                           |               |
+  |        |                            +----------+   |               |
+  |        |--(C)---- Access Token ---->|          |   |               |
+  |        |                            |          |   |               |
+  |        |<-(D)- Protected Resource --| Resource |   | Authorization |
+  | Client |                            |  Server  |   |     Server    |
+  |        |--(E)---- Access Token ---->|          |   |               |
+  |        |                            |          |   |               |
+  |        |<-(F)- Invalid Token Error -|          |   |               |
+  |        |                            +----------+   |               |
+  |        |                                           |               |
+  |        |--(G)----------- Refresh Token ----------->|               |
+  |        |                                           |               |
+  |        |<-(H)----------- Access Token -------------|               |
+  +--------+           & Optional Refresh Token        +---------------+
+
+### (basic token approach)
 - Use django-rest-framework's token-based authentication (saves token in db and checks on every request)
+
+### (web token approach)
 - Use a third party JWT authentication (all info in token so no db request required)
+    - Format = header.payload.verify_signature
  
 ## configure mainfolder/settings
 - add DEFAULT_AUTHENTICATION_CLASSES to REST_FRAMEWORK object:
@@ -53,11 +78,17 @@ In ./serializers.py, change the Meta classes to the signatures required
         ...
 
     }`
-- add SIMPLE_JWT:
-#prefixes the token with JWT e.g. 
-    `SIMPLE_JWT = {
-        'AUTH_HEADER_TYPES': ('JWT',),
-    }`
+
+- update JWT settings in project settings if necessary
+https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
+e.g.
+`
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    # Specifies the prefix that should be included in Auth header e.g. Authorization=JWT header.payload.sig
+    'AUTH_HEADER_TYPES': ('JWT',),
+}
+`
 
 ## create user serializers in core/serializers.py
 e.g.
@@ -74,14 +105,18 @@ class UserSerializer(BaseUserSerializer):
         fields = [...]
 `
 
-## add serializers via djoser property in settings.py
+## override BaseUserSerializer in core and add to djoser property in settings.py
 https://djoser.readthedocs.io/en/latest/settings.html#serializers
 e.g.
 `
 DJOSER = {
-    'SERIALIZERS': {...}
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.UserCreateSerializer',
+        'current_user': 'core.serializers.UserSerializer',
+    }
 }
 `
+
 
 ---
 
