@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ExtendedUser
+from .models import Profile
 from django.contrib.auth import get_user_model
 
 
@@ -11,11 +11,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'email']
 
 
-class ExtendedUserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
 
     # usser = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
-        model = ExtendedUser
+        model = Profile
         fields = ['url','id', 'user_id', 'phone', 'birth_date', 'membership']

@@ -1,5 +1,5 @@
-from .models import ExtendedUser
-from .serializers import ExtendedUserSerializer, UserSerializer
+from .models import Profile
+from .serializers import ProfileSerializer, UserSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework import generics
 from rest_framework import permissions
@@ -19,7 +19,7 @@ from django.contrib.auth import get_user_model
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'extended-users': reverse('extended-users-list', request=request, format=format)
+        'profile': reverse('profile-list', request=request, format=format)
     })
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,22 +31,22 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-class ExtendedUserViewSet(viewsets.ModelViewSet):
+class ProfileViewSet(viewsets.ModelViewSet):
     """
     This ViewSet automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
 
     Additionally we also provide an extra `highlight` action.
     """
-    queryset = ExtendedUser.objects.all()
-    serializer_class = ExtendedUserSerializer
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
-        extended_user = self.get_object()
-        return Response(extended_user.highlighted)
+        profile = self.get_object()
+        return Response(profile.highlighted)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

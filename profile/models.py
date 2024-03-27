@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-class ExtendedUser(models.Model):
+class Profile(models.Model):
     MEMBERSHIP_BRONZE = 'B'
     MEMBERSHIP_SILVER = 'S'
     MEMBERSHIP_GOLD = 'G'
