@@ -40,4 +40,5 @@ class ExtendedUserViewSet(viewsets.ModelViewSet):
         return Response(extended_user.highlighted)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(user=self.request.user)
+        

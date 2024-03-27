@@ -8,11 +8,11 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list', request=request, format=format),
-    })
+# @api_view(['GET'])
+# def api_root(request, format=None):
+#     return Response({
+#         'users': reverse('user-list', request=request, format=format),
+#     })
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
