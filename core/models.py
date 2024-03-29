@@ -7,9 +7,8 @@ class User(AbstractUser):
   email = models.EmailField(unique=True)
   USERNAME_FIELD = 'email'
   REQUIRED_FIELDS = ['username'] 
-
+  
 
   def save(self, *args, **kwargs):
-    name = self.username if self.username else self.email
-    self.username = name
+    self.username = self.email 
     super().save(*args, **kwargs)

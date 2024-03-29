@@ -14,6 +14,7 @@ from rest_framework.response import Response
 #         'users': reverse('user-list', request=request, format=format),
 #     })
 
+# set for router urls
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This viewset automatically provides `list` and `retrieve` actions.

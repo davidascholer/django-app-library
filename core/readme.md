@@ -117,6 +117,91 @@ DJOSER = {
 }
 `
 
+## edit permissions
+**Globally in settings**
+    e.g.
+    `
+    REST_FRAMEWORK = {
+        ...
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            # closes endpoints to all anonymous users
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ),
+    }
+    `
+
+**Override Global permissions in views**
+    e.g.
+    `
+    from .permissions import IsOwnerOrReadOnly
+    from rest_framework import permissions
+    ...
+    class ProfileViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+        ...
+        permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+        ...
+    `
+
+**Override view permissions in actions**
+    e.g.
+    `
+    from .permissions import IsOwnerOrReadOnly
+    from rest_framework import permissions
+    ...
+    class ProfileViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+        ...
+        permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+        ...
+        @action(detail=False, methods=['GET', 'PUT'],permission_classes=[permissions.IsAuthenticated])
+            def someFunction:
+            ...
+    `
+
+**Create permissions for each request type (CreateModelMixin, PutModelMixens, etc.)**
+    override the permissions with the get_permissions function
+    e.g.
+    `
+    #return a list of objects
+    from .permissions import IsOwnerOrReadOnly
+    from rest_framework import permissions
+    ...
+    class ProfileViewSet(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+        ...
+        permission_classes = [permissions.IsAuthenticated]
+
+        def get_permissions(self):
+            if self.request.method == 'GET':
+                return [AllowAny()]
+            return [isAuthenticated()]
+        ...
+
+
+    `
+
+**Apply custom model permissions**
+    1) override the permissions object inside of the Meta class of the Profile object
+    e.g.
+    `
+    class Meta:
+        ordering = ['user__first_name', 'user__last_name']
+        permissions = [
+            #(code value, code description)
+            ('view_history', 'Can view history')
+        ]
+    `
+    2) migrate
+    3) create a custom action
+    e.g.
+    `
+    from .permissions import ViewCustomerHistoryPermission
+    ...
+    class ProfileViewSet(ModelViewSet):
+        ...
+        @action(detail=True, permission_classes=[ViewCustomerHistoryPermission])
+        def history(self, request, pk):
+            #from step 1
+            return request.user.has_perm('profile.view_history')
+    `
 
 ---
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-class Profile(models.Model):
+class UserProfile(models.Model):
     MEMBERSHIP_BRONZE = 'B'
     MEMBERSHIP_SILVER = 'S'
     MEMBERSHIP_GOLD = 'G'
@@ -23,7 +23,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.email
 
-    # Allow admin panel to sort by first name
+    # Allow admin panel to sort by email
     def email(self):
         return self.user.email
 

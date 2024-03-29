@@ -38,15 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'debug_toolbar',
+    'corsheaders',
+    'debug_toolbar',
     'rest_framework',
     'djoser',
     'core',
-    'profile',
-]
+    'userprofile',
+] 
 
 MIDDLEWARE = [
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,7 +147,8 @@ AUTH_USER_MODEL = 'core.User'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-        'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # closes endpoints to all anonymous users
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
@@ -160,5 +163,12 @@ DJOSER = {
 SIMPLE_JWT = {
     # Specifies the prefix that should be included in Auth header e.g. Authorization=JWT header.payload.sig
     'AUTH_HEADER_TYPES': ('JWT',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(days=10),# 7 days default
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30)# 5 min default
 }
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://localhost:8000",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True # for testing only

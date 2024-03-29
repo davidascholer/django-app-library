@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db.models.query import QuerySet
-from .models import Profile
+from .models import UserProfile
 
 
 # class InventoryFilter(admin.SimpleListFilter):
@@ -16,7 +16,7 @@ from .models import Profile
 #         if self.value() == '<10':
 #             return queryset.filter(inventory__lt=10)
 
-@admin.register(Profile)
+@admin.register(UserProfile)
 class UserAdmin(admin.ModelAdmin):
     list_display = ['email',  'membership']
     list_editable = ['membership']
