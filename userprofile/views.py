@@ -1,5 +1,5 @@
 from .models import UserProfile
-from .serializers import UserProfileSerializer, UserSerializer
+from .serializers import UserProfileSerializer
 from .permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.decorators import api_view
@@ -20,15 +20,6 @@ def api_root(request, format=None):
     return Response({
         'userprofile': reverse('user-profile-list', request=request, format=format)
     })
-
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    This viewset automatically provides `list` and `retrieve` actions.
-    """
-    User = get_user_model()
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
 
 """
 Instead of disallowing access via custom Mixins, we do it through permissions.
@@ -63,14 +54,14 @@ class UserProfileViewSet(ModelViewSet):
         userprofile = self.get_object()
         return Response(userprofile.highlighted)
     
-    # detail=false means the action is availeble on the list view "api/userprofile/me/"
-    # detail=true means the action is available on the detail view "api/userprofile/me/1/"
+    # detail=False means the action is availeble on the list view "api/userprofile/"
+    # detail=True means the action is available on the detail view "api/userprofile/<id>/"
     @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
     def me(self, request):
         # if user is logged in, this will be a user object
         # if user is not logged in, it will be an instance of 'AnonymousUser'
         # if no userprofile exists, one will be created
-        (userprofile,created) = UserProfile.objects.get_or_create(
+        userprofile = UserProfile.objects.get(
             user_id=request.user.id)
         if request.method == 'GET':
             serializer = UserProfileSerializer(userprofile)
@@ -85,4 +76,13 @@ class UserProfileViewSet(ModelViewSet):
     @action(detail=True, permission_classes=[ViewCustomerHistoryPermission])
     def history(self, request, pk):
         return Response('ok')
+    
+    def destroy(self, request, *args, **kwargs):
+        print('kwargs from userprofile views',kwargs)
+        return Response({'error': 'User cannot be deleted because it is associated with user profile.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        # if User.objects.filter(product_id=kwargs['pk']).count() > 0:
+        #     return Response({'error': 'Product cannot be deleted because it is associated with an order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        # return super().destroy(request, *args, **kwargs)
+
         

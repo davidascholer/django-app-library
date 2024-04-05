@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'debug_toolbar',
     'rest_framework',
     'djoser',
@@ -137,6 +139,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -145,6 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ( 'rest_framework.permissions.IsAdminUser', ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -157,6 +166,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
         'current_user': 'core.serializers.UserSerializer',
+        # 'user_delete': 'core.serializers.UserDeleteSerializer',
     }
 }
 
@@ -164,7 +174,7 @@ SIMPLE_JWT = {
     # Specifies the prefix that should be included in Auth header e.g. Authorization=JWT header.payload.sig
     'AUTH_HEADER_TYPES': ('JWT',),
     # 'REFRESH_TOKEN_LIFETIME': timedelta(days=10),# 7 days default
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30)# 5 min default
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=300)# 5 min default
 }
 
 # CORS_ALLOWED_ORIGINS = [
